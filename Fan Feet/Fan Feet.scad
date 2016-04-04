@@ -7,21 +7,24 @@
 
 // -----------------------------------------------------------
 
-$fn = 15;
+fan_width = 120; // [1:200]
+fan_depth = 25.5; // [1:100]
 
-fan_width = 120;
-fan_depth = 25.5;
-
-hole_diameter = 4;
+hole_diameter = 4; // [1:10]
 hole_distance = 7.5; // in x and z direction
 
-wall_size = 5;
-height = 20;
-width = 25;
-base_depth = 60; // minimum fan_depth + (2 * wall_size)
+wall_size = 5; // [1:10]
+height = 20; // [1:100]
+width = 25; // [1:100]
+
+// minimum: fan_depth + (2 * wall_size)
+base_depth = 60; // [1:100]
 
 // -----------------------------------------------------------
 
+/* [Hidden] */
+
+$fn = 15;
 depth = fan_depth + (2 * wall_size);
 
 // -----------------------------------------------------------
