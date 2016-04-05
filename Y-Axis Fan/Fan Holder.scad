@@ -13,13 +13,6 @@
  *
  * The Fabrikator Mini V1.5 include a new bracket that prevents
  * the old design from sliding fully onto the stepper motor.
- * A parameter has been added (fab_mini_v15) that allows
- * reverting to the old behvior.
- *
- * For V1.5, a height of 25mm is suggested, as this provides
- * enough stability with the big cut-out. To revert to something
- * like the original model, set the height to 15mm (and
- * fab_mini_v15 to "false").
  */
 
 // -----------------------------------------------------------
@@ -36,6 +29,8 @@ fan_screw_distance = 20; // [22]
 fan_screw_diameter = 3; // [1:5]
 
 fan_hole_angled = "true"; // [true, false]
+
+arm_inward_angle_left = 2; // [0:5]
 
 // -----------------------------------------------------------
 
@@ -62,9 +57,11 @@ fan_screw_pos = fan_screw_distance / 2;
 fan_screw_neg = -fan_screw_pos;
 
 fabrikator_mini_v15_height = 20;
-mid_left_cutout_height = 5;
+mid_left_cutout_height = 6;
 
 base_height = 5;
+
+arm_inward_angle_right = 0;
 
 // -----------------------------------------------------------
 
@@ -80,57 +77,97 @@ module ellipse(w, l, d) {
         cylinder(d = w, h = d);
 }
 
+module left_arm() {
+    // bottom left arm
+    translate([0, 0, bottom_arm_gap])
+        cube([motor_depth + nub_depth, wall_size, bottom_arm_height]);
+
+    // bottom left nub
+    translate([0, 0, bottom_arm_gap])
+        cube([nub_depth, wall_size + nub_size, bottom_arm_height]);
+
+    if (height > fabrikator_mini_v15_height) {
+        // top left arm
+        translate([0, 0, fabrikator_mini_v15_height + 1])
+            cube([motor_depth + nub_depth, wall_size, height - fabrikator_mini_v15_height - 1]);
+    
+        // top left nub
+        translate([0, 0, fabrikator_mini_v15_height + 1])
+            cube([nub_depth, wall_size + nub_size, height - fabrikator_mini_v15_height - 1]);
+    }
+
+    // left back support
+    translate([motor_depth + nub_depth - back_support_depth, 0, 0])
+        cube([back_support_depth, wall_size, height]);
+
+    // mid left support
+    translate([nub_depth + mid_left_cutout, 0, 10])
+        cube([motor_depth - back_support_depth - mid_left_cutout, wall_size, height - fabrikator_mini_v15_height + mid_left_cutout_height]);
+    
+    if (arm_inward_angle_left != 0) {
+        // connecting piece for angled arm
+        translate([motor_depth + nub_depth - back_support_depth, 0, 0])
+            cube([1.5 * back_support_depth, wall_size, height]);
+    }
+}
+
+module right_arm() {
+    // right arm
+    difference() {
+        translate([0, motor_width + wall_size, 0])
+            cube([motor_depth + nub_depth, wall_size, height]);
+        
+        translate([24 - wall_size, 28, 4])
+            rotate([0, 0, 90])
+            ellipse(7, 20, 8);
+        
+        if (height > 23) {
+            translate([24 - wall_size, 28, 15])
+                rotate([0, 0, 90])
+                ellipse(7, 20, 8);
+        }
+    }
+    
+    // right nub
+    translate([0, motor_width + wall_size - nub_size, 0])
+        cube([nub_depth, wall_size + nub_size, height]);
+    
+    if (arm_inward_angle_right != 0) {
+        // connecting piece for angled arm
+        translate([motor_depth + nub_depth - back_support_depth, motor_width + wall_size, 0])
+            cube([1.5 * back_support_depth, wall_size, height]);
+    }
+}
+
 // -----------------------------------------------------------
 
 // stepper motor
 %translate([nub_depth, wall_size, 0])
     cube([motor_depth, motor_width, height + 1]);
 
-// bottom left arm
-translate([0, 0, bottom_arm_gap])
-    cube([motor_depth + nub_depth, wall_size, bottom_arm_height]);
-
-// bottom left nub
-translate([0, 0, bottom_arm_gap])
-    cube([nub_depth, wall_size + nub_size, bottom_arm_height]);
-
-if (height > fabrikator_mini_v15_height) {
-    // top left arm
-    translate([0, 0, fabrikator_mini_v15_height])
-        cube([motor_depth + nub_depth, wall_size, height - fabrikator_mini_v15_height]);
+difference() {
+    // left arm
+    translate([0, 27 * sin(arm_inward_angle_left / 1.5), 0])
+        rotate([0, 0, -(arm_inward_angle_left / 1.5)])
+        left_arm();
     
-    // top left nub
-    translate([0, 0, fabrikator_mini_v15_height])
-        cube([nub_depth, wall_size + nub_size, height - fabrikator_mini_v15_height]);
+    // cut off small ledge
+    translate([0, -1, -base_height])
+        cube([motor_depth + nub_depth + wall_size, 1, motor_width + base_height + wall_size]);
 }
 
-// left back support
-translate([motor_depth + nub_depth - back_support_depth, 0, 0])
-    cube([back_support_depth, wall_size, height]);
-
-// mid left support
-translate([nub_depth + mid_left_cutout, 0, 10])
-    cube([motor_depth - back_support_depth - mid_left_cutout, wall_size, height - fabrikator_mini_v15_height + mid_left_cutout_height]);
-
-// right arm
 difference() {
-    translate([0, motor_width + wall_size, 0])
-        cube([motor_depth + nub_depth, wall_size, height]);
-    
-    translate([24 - wall_size, 28, 4])
-        rotate([0, 0, 90])
-        ellipse(7, 20, 8);
-    
-    if (height > 23) {
-        translate([24 - wall_size, 28, 15])
-            rotate([0, 0, 90])
-            ellipse(7, 20, 8);
+    // right arm
+    translate([35 * sin(arm_inward_angle_right / 1.5), -27 * sin(arm_inward_angle_right / 1.5), 0])
+        rotate([0, 0, arm_inward_angle_right / 1.5])
+        right_arm();
+
+    if (arm_inward_angle_right != 0) {
+        // cut off small ledge
+        translate([0, motor_width + (2 * wall_size), -base_height])
+            cube([motor_depth + nub_depth + wall_size, 1, motor_width + base_height + wall_size]);
     }
 }
-    
-// right nub
-translate([0, motor_width + wall_size - nub_size, 0])
-    cube([nub_depth, wall_size + nub_size, height]);
 
 // back wall
 difference() {
