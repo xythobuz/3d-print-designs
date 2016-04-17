@@ -12,10 +12,10 @@ $fn = 25;
 height = 10;
 
 // works properly from around 40 to 80 degrees
-display_angle = 80; // in degrees
+display_angle = 60; // in degrees
 
 // "right", "left", "both" or "none"
-hole_position = "both";
+hole_position = "right";
 hole_diameter = 2.9;
 
 // -----------------------------------------------------------
