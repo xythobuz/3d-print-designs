@@ -17,7 +17,7 @@
 
 // -----------------------------------------------------------
 
-height = 25; // [14:26]
+height = 27; // [14:26]
 
 // default for 25mm fan: 23
 fan_hole_diameter = 23; // [26]
@@ -54,7 +54,7 @@ motor_width = 28.3;
 motor_depth = 27;
 
 cut_out_depth = 10;
-cut_out_height = 2;
+cut_out_height = 4;
 
 $fn = 25;
 
@@ -67,6 +67,10 @@ mid_left_cutout_height = 6;
 base_height = 5;
 
 arm_inward_angle_right = 0;
+
+top_fan_extra_layer = 0.8;
+
+heat_sink_cutout = 24.5;
 
 // -----------------------------------------------------------
 
@@ -158,6 +162,10 @@ module right_arm() {
 %translate([nub_depth, wall_size, 0])
     cube([motor_depth, motor_width, height + 1]);
 
+// heat sink
+%translate([nub_depth + motor_depth, ((2 * wall_size) + motor_width - heat_sink_cutout) / 2, 1.5 * top_fan_extra_layer])
+    cube([10, heat_sink_cutout, heat_sink_cutout]);
+
 difference() {
     // left arm
     translate([0, 27 * sin(arm_inward_angle_left / 1.5), 0])
@@ -194,13 +202,16 @@ difference() {
         translate([25, 8 + wall_size, 15])
             ellipse(7, 20, 8);
     }
+    
+    translate([nub_depth + motor_depth, ((2 * wall_size) + motor_width - heat_sink_cutout) / 2, 1.5 * top_fan_extra_layer])
+        cube([wall_size, heat_sink_cutout, heat_sink_cutout]);
 }
 
 // bottom part
 difference() {
     // base
     translate([0, 0, -base_height])
-        cube([motor_depth + nub_depth + wall_size, motor_width + (2 * wall_size) - right_wall_size_modifier, base_height]);
+        cube([motor_depth + nub_depth + wall_size, motor_width + (2 * wall_size) - right_wall_size_modifier, base_height + top_fan_extra_layer]);
     
     // cut off angled bottom part
     rotate([0, -fan_angle, 0])
@@ -229,12 +240,12 @@ difference() {
     }
     
     // big air hole
-    translate([8, 36, -1.8])
+    translate([8.5, 36, -1.3])
         rotate([90, 0, 0])
         cylinder(d = 2, h = 40);
     
     // small air hole
-    translate([12, 36, -1.5])
+    translate([12.5, 36, -1])
         rotate([90, 0, 0])
         cylinder(d = 1.5, h = 40);
     
