@@ -6,12 +6,12 @@
  */
 
 // M2: 4; M3: 5.5; M4: 7; M5: 8
-nut_size = 5.5; // [1:50]
+nut_size = 7; // [1:50]
 nut_height = 2.5; // [0:50]
-base_size = 20; // [1:50]
+base_size = 30; // [1:50]
 base_height = 3; // [1:50]
 wall_size = 2.5; // [1:50]
-cut_out_factor = 0.3; // [0.0:1.0]
+cut_out_factor = 0.35; // [0.0:1.0]
 cut_out_count = 5; // [0:10]
 nut_size_buffer = 0.1; // [0.0:1.0]
 
