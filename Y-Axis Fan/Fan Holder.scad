@@ -36,6 +36,8 @@ arm_inward_angle_left = 2; // [0:5]
 
 /* [Hidden] */
 
+right_wall_size_modifier = 0.75; // [0:2]
+
 bottom_arm_height = 2;
 bottom_arm_gap = 8;
 
@@ -46,10 +48,13 @@ wall_size = 3;
 fan_angle = 10;
 
 nub_size = 1;
-nub_depth = 1;
+nub_depth = 2;
 
-motor_width = 28.5;
+motor_width = 28.3;
 motor_depth = 27;
+
+cut_out_depth = 10;
+cut_out_height = 2;
 
 $fn = 25;
 
@@ -112,25 +117,33 @@ module left_arm() {
 }
 
 module right_arm() {
-    // right arm
     difference() {
-        translate([0, motor_width + wall_size, 0])
-            cube([motor_depth + nub_depth, wall_size, height]);
+        union() {
+            // right wall
+            translate([0, motor_width + wall_size, 0])
+                cube([motor_depth + nub_depth, wall_size - right_wall_size_modifier, height]);
+            
+            // right nub
+            translate([0, motor_width + wall_size - nub_size, 0])
+                cube([nub_depth, wall_size + nub_size - right_wall_size_modifier, height]);
+        }
         
-        translate([24 - wall_size, 28, 4])
+        translate([24 - wall_size, 28, 3])
             rotate([0, 0, 90])
             ellipse(7, 20, 8);
         
         if (height > 23) {
-            translate([24 - wall_size, 28, 15])
+            translate([24 - wall_size, 28, 13.5])
                 rotate([0, 0, 90])
                 ellipse(7, 20, 8);
         }
+        
+        // cut off a small nub at the top to fit the Z-axis rod holder
+        translate([0, motor_width + wall_size - nub_size, height - cut_out_height])
+            cube([cut_out_depth, wall_size + nub_size, cut_out_height]);
     }
     
-    // right nub
-    translate([0, motor_width + wall_size - nub_size, 0])
-        cube([nub_depth, wall_size + nub_size, height]);
+    
     
     if (arm_inward_angle_right != 0) {
         // connecting piece for angled arm
@@ -172,7 +185,7 @@ difference() {
 // back wall
 difference() {
     translate([motor_depth + nub_depth, 0, 0])
-        cube([wall_size, motor_width + (2 * wall_size), height]);
+        cube([wall_size, motor_width + (2 * wall_size) - right_wall_size_modifier, height]);
     
     translate([25, 8 + wall_size, 4])
         ellipse(7, 20, 8);
@@ -187,7 +200,7 @@ difference() {
 difference() {
     // base
     translate([0, 0, -base_height])
-        cube([motor_depth + nub_depth + wall_size, motor_width + (2 * wall_size), base_height]);
+        cube([motor_depth + nub_depth + wall_size, motor_width + (2 * wall_size) - right_wall_size_modifier, base_height]);
     
     // cut off angled bottom part
     rotate([0, -fan_angle, 0])
