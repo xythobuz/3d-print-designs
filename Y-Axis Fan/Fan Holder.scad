@@ -30,13 +30,13 @@ fan_screw_diameter = 3; // [1:5]
 
 fan_hole_angled = "true"; // [true, false]
 
-arm_inward_angle_left = 2; // [0:5]
+arm_inward_angle_left = 4; // [0:5]
 
 // -----------------------------------------------------------
 
 /* [Hidden] */
 
-right_wall_size_modifier = 0.75; // [0:2]
+right_wall_size_modifier = 1.25; // [0:2]
 
 bottom_arm_height = 2;
 bottom_arm_gap = 8;
@@ -44,7 +44,7 @@ bottom_arm_gap = 8;
 back_support_depth = 2;
 mid_left_cutout = 9;
 
-wall_size = 3;
+wall_size = 3.5;
 fan_angle = 10;
 
 nub_size = 1;
@@ -70,7 +70,7 @@ arm_inward_angle_right = 0;
 
 top_fan_extra_layer = 0.8;
 
-heat_sink_cutout = 24.5;
+heat_sink_cutout = 24.4;
 
 // -----------------------------------------------------------
 
