@@ -6,7 +6,7 @@
  * Created by:
  * Thomas Buck <xythobuz@xythobuz.de> in April 2016
  *
- * Licensed under the Creative Commons - Attribution license.
+ * Licensed under the Creative Commons - Attribution - Share alike license.
  */
 
 height = 10;
