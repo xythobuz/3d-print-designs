@@ -17,7 +17,7 @@
 
 // -----------------------------------------------------------
 
-height = 27; // [14:26]
+height = 28.5; // [14:26]
 
 // default for 25mm fan: 23
 fan_hole_diameter = 23; // [26]
@@ -36,7 +36,7 @@ arm_inward_angle_left = 4; // [0:5]
 
 /* [Hidden] */
 
-right_wall_size_modifier = 1.25; // [0:2]
+right_wall_size_modifier = 1.75; // [0:2]
 
 bottom_arm_height = 2;
 bottom_arm_gap = 8;
@@ -44,7 +44,7 @@ bottom_arm_gap = 8;
 back_support_depth = 2;
 mid_left_cutout = 9;
 
-wall_size = 3.5;
+wall_size = 4;
 fan_angle = 10;
 
 nub_size = 1;
@@ -54,7 +54,7 @@ motor_width = 28.3;
 motor_depth = 27;
 
 cut_out_depth = 10;
-cut_out_height = 4;
+cut_out_height = 5.5;
 
 $fn = 25;
 
