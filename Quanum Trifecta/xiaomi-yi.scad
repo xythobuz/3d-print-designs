@@ -15,14 +15,22 @@ cam_height = 43; // 42.1
 button_size = 12;
 button_dist = 14;
 
-mic_hole = 2;
+mic_hole = 2.5;
 mic_hole_dist = 17.8;
+mic_hole_2_width = 2;
+mic_hole_2_height = 8;
+mic_hole_2_dist = 4.5;
 
-bottom_hole = 8;
+bottom_hole = 8.5;
 bottom_hole_dist = 17.2;
+light_hole = 3;
+light_hole_dist_x = 9;
+light_hole_dist_y = 5.5;
 
 wifi_hole = 6.4;
-wifi_hole_dist = 18;
+wifi_hole_dist = 17.5;
+wifi_hole_2 = 3;
+wifi_hole_2_dist = 6;
 
 mount_width = 3; // 3.1
 mount_gap = 3.2; // 3.1
@@ -36,9 +44,20 @@ wall_size = 1.8;
 lip_height = 1;
 lip_width = 1.4;
 
+print_support_size = 10;
+print_support_height = 0.4;
+
 $fn = 20;
 
 // -----------------------------------------------------------
+
+module print_support() {
+    difference() {
+        cylinder(d = print_support_size, h = print_support_height);
+        translate([0, 0, -1])
+            cube([print_support_size / 2, print_support_size / 2, print_support_height + 2]);
+    }
+}
 
 module half_cylinder(d, h) {
     rotate([0, 0, 180])
@@ -80,15 +99,29 @@ module frameWithButton() {
             rotate([90, 0, 0])
             cylinder(d = mic_hole, h = wall_size + 2);
         
+        // mic slit
+        translate([wall_size + cam_width - mic_hole_2_dist, -1, (cam_depth - mic_hole_2_height) / 2])
+            cube([mic_hole_2_width, wall_size + 2, mic_hole_2_height]);
+        
         // bottom hole
         translate([wall_size + cam_width - bottom_hole_dist, wall_size + 1, cam_depth / 2])
             rotate([90, 0, 0])
             cylinder(d = bottom_hole, h = wall_size + 2);
         
+        // light hole
+        translate([wall_size + light_hole_dist_x, wall_size + 1, cam_depth - light_hole_dist_y])
+            rotate([90, 0, 0])
+            cylinder(d = light_hole, h = wall_size + 2);
+        
         // wifi hole
         translate([wall_size + cam_width - 1, wall_size + wifi_hole_dist, cam_depth / 2])
             rotate([0, 90, 0])
             cylinder(d = wifi_hole, h = wall_size + 2);
+            
+        // wifi light hole
+        translate([wall_size + cam_width - 1, wall_size + wifi_hole_dist + wifi_hole_2_dist, cam_depth / 2])
+            rotate([0, 90, 0])
+            cylinder(d = wifi_hole_2, h = wall_size + 2);
     }
 }
 
@@ -117,6 +150,20 @@ module frameLips() {
     
     translate([0, 0, cam_depth + lip_height])
         lip();
+    
+    print_support();
+    
+    translate([cam_width + (2 * wall_size), 0, 0])
+        rotate([0, 0, 90])
+        print_support();
+    
+    translate([cam_width + (2 * wall_size), cam_height + (2 * wall_size), 0])
+        rotate([0, 0, 180])
+        print_support();
+    
+    translate([0, cam_height + (2 * wall_size), 0])
+        rotate([0, 0, 270])
+        print_support();
 }
 
 module mountArm() {
@@ -152,8 +199,12 @@ module cover() {
 
     translate([wall_size + ((cam_width - (mount_gap + (2 * mount_width))) / 2) + mount_offset, (2 * wall_size) + cam_height, lip_height + (cam_depth / 2)])
         mount();
+    
+    translate([wall_size + (cam_width / 2) + mount_offset, wall_size + cam_height, 0])
+        cylinder(d = print_support_size, h = print_support_height);
 }
 
 // -----------------------------------------------------------
 
-cover();
+translate([print_support_size / 2, print_support_size / 2, 0])
+    cover();
