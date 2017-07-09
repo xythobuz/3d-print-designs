@@ -31,6 +31,10 @@ thread_diameter = 5;
 thread_pitch = 0.8;
 thread_height = 15;
 
+thread2_diameter = 5;
+thread2_pitch = 0.8;
+thread2_height = 10;
+
 // OpenSCAD Threads
 // http://dkprojects.net/openscad-threads/
 include <threads.scad>;
@@ -65,6 +69,16 @@ module adapter() {
         // liquid output inlet
         translate([wall_size, 0, wall_size + channel_diameter - 20])
             cylinder(d = channel_diameter, h = 20);
+        
+        // gas input thread
+        translate([-diameter / 2 - 1, 0, (channel_diameter / 2) + wall_size])
+            rotate([0, 90, 0])
+            metric_thread(thread2_diameter, thread2_pitch, thread2_height + 1, internal = true);
+        
+        // liquid output thread
+        translate([diameter / 2 - thread2_height, 0, (channel_diameter / 2) + wall_size])
+            rotate([0, 90, 0])
+            metric_thread(thread2_diameter, thread2_pitch, thread2_height + 1, internal = true);
     }
     
     // liquit output inlet
@@ -79,15 +93,20 @@ module adapter() {
             metric_thread(thread_diameter, thread_pitch, thread_height + 1, internal = true);
     }
     
+    /*
+    // inlet hose adapter
     translate([-diameter - hose_offset, 0, 6])
         rotate([0, 90, 0])
         tube_adapter();
     
+    // outlet hose adapter
     translate([diameter + hose_offset, 0, 6])
         rotate([0, -90, 0])
         tube_adapter();
+    
+    */
 }
 
-translate([0, 0, channel_diameter + (2 * wall_size)])
-rotate([180, 0, 0])
+//translate([0, 0, channel_diameter + (2 * wall_size)])
+//rotate([180, 0, 0])
     adapter();
