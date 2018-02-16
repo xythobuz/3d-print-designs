@@ -15,7 +15,7 @@ height = 10;
 display_angle = 60; // in degrees
 
 // "right", "left", "both" or "none"
-hole_position = "right";
+hole_position = "both";
 hole_diameter = 2.9;
 
 // -----------------------------------------------------------
@@ -61,12 +61,12 @@ difference() {
     // insert holes
     if ((hole_position == "right") || (hole_position == "both")) {
         rotate([0, 90, 90 + display_angle])
-            translate([-8, -0.5 + (4 * sin(display_angle - 45)), -4])
+            translate([-8, 2.5 + (4 * sin(display_angle - 45)), -4])
             cylinder(d=hole_diameter, h=10);
     }
     if ((hole_position == "left") || (hole_position == "both")) {
         rotate([0, 90, 90 + display_angle])
-            translate([-2, -0.5 + (4 * sin(display_angle - 45)), -4])
+            translate([-2, 2.5 + (4 * sin(display_angle - 45)), -4])
             cylinder(d=hole_diameter, h=10);
     }
 }
