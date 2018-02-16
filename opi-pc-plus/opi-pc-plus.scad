@@ -64,7 +64,7 @@ opi_lan_off_x = -4.2;
 
 opi_dual_usb_width = 13.2;
 opi_dual_usb_depth = 17.5;
-opi_dual_usb_height = 15.0;
+opi_dual_usb_height = 15.8;
 opi_dual_usb_off_y = opi_lan_off_y + opi_lan_width + 4.3;
 opi_dual_usb_off_x = -4.1;
 
@@ -107,6 +107,8 @@ text2_off_y = 40.5;
 
 corner_helper_size = 20;
 corner_helper_height = 0.2;
+
+cutout_gap = 0.2;
 
 $fn = 20;
 
@@ -205,8 +207,8 @@ module case_bottom() {
         cube([outer_wall_size, opi_width + (2 * outer_wall_size), standoff_height + opi_pcb_height]);
         
         // sd card cutout
-        translate([-1, outer_wall_size + opi_sd_off_y, standoff_height - opi_sd_height])
-            cube([outer_wall_size + 2, opi_sd_width, opi_sd_height + standoff_height]);
+        translate([-1, outer_wall_size + opi_sd_off_y - cutout_gap, standoff_height - opi_sd_height])
+            cube([outer_wall_size + 2, opi_sd_width + (2 * cutout_gap), opi_sd_height + standoff_height]);
     }
     
     // front wall
@@ -288,16 +290,16 @@ module case_top() {
         cube([opi_length, outer_wall_size, top_standoff_height]);
         
         // power connector
-        translate([opi_power_off_x, -1, -1])
-            cube([opi_power_width, outer_wall_size + 2, opi_power_height + 1]);
+        translate([opi_power_off_x - cutout_gap, -1, -1])
+            cube([opi_power_width + (2 * cutout_gap), outer_wall_size + 2, opi_power_height + 1]);
         
         // hdmi connector
-        translate([opi_hdmi_off_x, -1, -1])
-            cube([opi_hdmi_width, outer_wall_size + 2, opi_hdmi_height + 1]);
+        translate([opi_hdmi_off_x - cutout_gap, -1, -1])
+            cube([opi_hdmi_width + (2 * cutout_gap), outer_wall_size + 2, opi_hdmi_height + 1]);
         
         // audio connector
-        translate([opi_audio_off_x, -1, -1])
-            cube([opi_audio_diameter, outer_wall_size + 2, opi_audio_diameter + 1]);
+        translate([opi_audio_off_x - cutout_gap, -1, -1])
+            cube([opi_audio_diameter + (2 * cutout_gap), outer_wall_size + 2, opi_audio_diameter + 1]);
     }
     
     // back wall
@@ -305,8 +307,8 @@ module case_top() {
     difference() {
         cube([opi_length, outer_wall_size, top_standoff_height]);
         
-        translate([opi_length - opi_ir_off_x - opi_ir_width, -1, -1])
-            cube([opi_ir_width, outer_wall_size + 2, opi_ir_height + 1]);
+        translate([opi_length - opi_ir_off_x - opi_ir_width - cutout_gap, -1, -1])
+            cube([opi_ir_width + (2 * cutout_gap), outer_wall_size + 2, opi_ir_height + 1]);
     }
     
     // left wall
@@ -315,16 +317,16 @@ module case_top() {
         cube([outer_wall_size, opi_width + (2 * outer_wall_size), top_standoff_height]);
         
         // reset button
-        translate([-1, outer_wall_size + opi_reset_off_y, -1])
-            cube([outer_wall_size + 2, opi_reset_diameter, opi_reset_diameter + opi_reset_off_z + 1]);
+        translate([-1, outer_wall_size + opi_reset_off_y - cutout_gap, -1])
+            cube([outer_wall_size + 2, opi_reset_diameter + (2 * cutout_gap), opi_reset_diameter + opi_reset_off_z + 1]);
         
         // camera connector
-        translate([-1, outer_wall_size + opi_cam_off_y, -1])
-            cube([outer_wall_size + 2, opi_cam_width, opi_cam_height + 1]);
+        translate([-1, outer_wall_size + opi_cam_off_y - cutout_gap, -1])
+            cube([outer_wall_size + 2, opi_cam_width + (2 * cutout_gap), opi_cam_height + 1]);
         
         // micro usb connector
-        translate([-1, outer_wall_size + opi_micro_usb_off_y, -1])
-            cube([outer_wall_size + 2, opi_micro_usb_width, opi_micro_usb_height + 1]);
+        translate([-1, outer_wall_size + opi_micro_usb_off_y - cutout_gap, -1])
+            cube([outer_wall_size + 2, opi_micro_usb_width + (2 * cutout_gap), opi_micro_usb_height + 1]);
     }
     
     // right wall
@@ -333,16 +335,16 @@ module case_top() {
         cube([outer_wall_size, opi_width + (2 * outer_wall_size), top_standoff_height]);
         
         // single usb port
-        translate([-1, outer_wall_size + opi_width - opi_single_usb_off_y - opi_single_usb_width, -1])
-            cube([outer_wall_size + 2, opi_single_usb_width, opi_single_usb_height + 1]);
+        translate([-1, outer_wall_size + opi_width - opi_single_usb_off_y - opi_single_usb_width - cutout_gap, -1])
+            cube([outer_wall_size + 2, opi_single_usb_width + (2 * cutout_gap), opi_single_usb_height + 1]);
         
         // ethernet port
-        translate([-1, outer_wall_size + opi_width - opi_lan_off_y - opi_lan_width, -1])
-            cube([outer_wall_size + 2, opi_lan_width, opi_lan_height + 1]);
+        translate([-1, outer_wall_size + opi_width - opi_lan_off_y - opi_lan_width - cutout_gap, -1])
+            cube([outer_wall_size + 2, opi_lan_width + (2 * cutout_gap), opi_lan_height + 1]);
         
         // dual usb ports
-        translate([-1, outer_wall_size + opi_width - opi_dual_usb_off_y - opi_dual_usb_width, -1])
-            cube([outer_wall_size + 2, opi_dual_usb_width, opi_dual_usb_height + 1]);
+        translate([-1, outer_wall_size + opi_width - opi_dual_usb_off_y - opi_dual_usb_width - cutout_gap, -1])
+            cube([outer_wall_size + 2, opi_dual_usb_width + (2 * cutout_gap), opi_dual_usb_height + 1]);
     }
 }
 
@@ -355,19 +357,19 @@ module case_whole() {
 
 // ---------------------
 // For looking at it in the OpenSCAD editor:
-/*
+
 case_whole();
 // place orangepi inside case, for visualization
 %translate([outer_wall_size, outer_wall_size, bottom_top_size + standoff_height])
     orangepi_pc_plus();
-*/
+
 // ---------------------
 // For printing:
 /*
 case_bottom();
-*/
+*//*
 translate([0, 2 * (opi_width + (2 * outer_wall_size)) + 25, bottom_top_size])
     rotate([180, 0, 0])
     case_top();
-
+*/
 // ---------------------
