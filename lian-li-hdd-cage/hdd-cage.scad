@@ -20,9 +20,9 @@ lip_width = cage_lip_hole_dist + 10.0;
 rail_height = 7.5;
 rail_height_front = 13.0;
 rail_radius = 7.0;
-rail_length = 117;
+rail_length = 120;
 rail_width = lip_wall + 2;
-rail_dist = 27.5;
+rail_dist = 27.5 - 8;
 rail_off_front = 7.8;
 
 nub_small = 6.6;
@@ -34,11 +34,13 @@ stable_cut_height = 15.0;
 stable_cut_depth = 20.0;
 stable_cut_width = 7.5;
 
+add_after_rail = 6;
+
 $fn = 20;
 
 module cage_hold() {
     translate([cage_hold_large / 2, cage_hold_large / 2, 0])
-    union() {
+    hull() {
         cylinder(d = cage_hold_large, h = cage_wall + 2);
     
         translate([0, cage_hold_length - (cage_hold_large / 2) - (cage_hold_small / 2), 0])
@@ -142,26 +144,24 @@ module mount_lip() {
     }
 }
 
-add_after_rail = 15;
-
 module rail_wall() {
     difference() {
-        cube([lip_wall, rail_length + add_after_rail, rail_dist + rail_height + (rail_dist / 2)]);
+        cube([lip_wall, rail_length + add_after_rail, rail_dist + rail_height + (rail_dist / 3)]);
         
         // bubbles
         translate([-1, 10, 10])
         for (i = [0 : 15 : (rail_length + add_after_rail - 20)]) {
-            translate([0, i, 0])
+            translate([0, i + 1, 0])
                 rotate([0, 90, 0])
                 cylinder(d = 7, h = lip_wall + 2);
             
-            translate([0, i + 8, 10])
-                rotate([0, 90, 0])
-                cylinder(d = 7, h = lip_wall + 2);
+            //translate([0, i + 8, 10])
+            //    rotate([0, 90, 0])
+            //    cylinder(d = 7, h = lip_wall + 2);
             
-            translate([0, i + 4, 32.5])
-                rotate([0, 90, 0])
-                cylinder(d = 7, h = lip_wall + 2);
+            //translate([0, i + 4, 32.5])
+            //    rotate([0, 90, 0])
+            //    cylinder(d = 7, h = lip_wall + 2);
         }
     }
 }
@@ -219,8 +219,27 @@ module mount() {
         stabilizer();
     
     // bottom/top horizontal plate
-    translate([-lip_wall, -lip_wall, cage_lip + rail_dist + rail_height + (rail_dist / 2)])
+    difference() {
+        translate([-lip_wall, -lip_wall, cage_lip + rail_dist + rail_height + (rail_dist / 3)])
         cube([cage_width + (2 * lip_wall), rail_length + add_after_rail, lip_wall]);
+        
+        translate([0, 0, cage_lip + rail_dist + rail_height + (rail_dist / 3)])
+        union() {
+            translate([cage_hold_off_left, cage_hold_off_bot, -1])
+            cage_hold();
+        
+        translate([cage_hold_off_left + cage_hold_large + cage_hold_off_right, cage_hold_off_bot, -1])
+            cage_hold();
+        
+        translate([cage_hold_off_left, cage_hold_off_bot + cage_hold_length + cage_hold_off_top, -1])
+            cage_hold();
+        
+        translate([cage_hold_off_left + cage_hold_large + cage_hold_off_right, cage_hold_off_bot + cage_hold_length + cage_hold_off_top, -1])
+            cage_hold();
+        }
+    }
 }
 
-mount();
+translate([60, 120, 1])
+rotate([90, 0, -90])
+    mount();
