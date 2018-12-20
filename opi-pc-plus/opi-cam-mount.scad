@@ -145,12 +145,15 @@ module holder_top() {
     }
 }
 
-holder_bottom();
+module cam_holder() {
+    holder_bottom();
 
-%translate([2 * wall_size, 2 * wall_size, wall_size])
-    cam();
+    %translate([2 * wall_size, 2 * wall_size, wall_size])
+        cam();
 
 
-translate([wall_size, wall_size, wall_size + opi_cam_depth + opi_cam_bottom_depth])
-    holder_top();
+    translate([wall_size, wall_size, wall_size + opi_cam_depth + opi_cam_bottom_depth])
+        holder_top();
+}
 
+cam_holder();
