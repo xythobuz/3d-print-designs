@@ -22,7 +22,7 @@ include <HoseAdapter.scad>;
 channel_diameter = 4;
 wall_size = 4;
 pipe_diameter = 4;
-pipe_wall_size = 1.2;
+pipe_wall_size = 2.2;
 pipe_height = 20;
 
 hose_offset = 6.5;
@@ -35,9 +35,17 @@ thread2_diameter = 5;
 thread2_pitch = 0.8;
 thread2_height = 10;
 
+oring_height = 2.2;
+oring_dia_add = 4.2;
+
 // OpenSCAD Threads
 // http://dkprojects.net/openscad-threads/
-include <threads.scad>;
+//include <threads.scad>;
+
+// threads are not really useful in these sizes...
+module metric_thread(dia, pitch, height, internal) {
+    cylinder(d = dia - pitch, h = height);
+}
 
 module cap() {
     rotate([180, 0, 0])
@@ -72,13 +80,18 @@ module adapter() {
         
         // gas input thread
         translate([-diameter / 2 - 1, 0, (channel_diameter / 2) + wall_size])
-            rotate([0, 90, 0])
+        rotate([0, 90, 0]) {
             metric_thread(thread2_diameter, thread2_pitch, thread2_height + 1, internal = true);
+            cylinder(d = thread2_diameter + oring_dia_add, h = oring_height + 1);
+        }
         
         // liquid output thread
         translate([diameter / 2 - thread2_height, 0, (channel_diameter / 2) + wall_size])
-            rotate([0, 90, 0])
+        rotate([0, 90, 0]) {
             metric_thread(thread2_diameter, thread2_pitch, thread2_height + 1, internal = true);
+            translate([0, 0, thread2_height - oring_height])
+                cylinder(d = thread2_diameter + oring_dia_add, h = oring_height + 1);
+        }
     }
     
     // liquit output inlet
@@ -103,10 +116,9 @@ module adapter() {
     translate([diameter + hose_offset, 0, 6])
         rotate([0, -90, 0])
         tube_adapter();
-    
     */
 }
 
-//translate([0, 0, channel_diameter + (2 * wall_size)])
-//rotate([180, 0, 0])
+translate([0, 0, channel_diameter + (2 * wall_size)])
+rotate([180, 0, 0])
     adapter();
