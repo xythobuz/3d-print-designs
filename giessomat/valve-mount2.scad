@@ -85,5 +85,5 @@ module all_valves() {
     }
 }
 
-rotate([0, -90, 0])
+//rotate([0, -90, 0])
 all_valves();

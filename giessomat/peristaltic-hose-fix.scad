@@ -56,5 +56,5 @@ module print() {
     }
 }
 
-//fix();
-print();
+fix();
+//print();
