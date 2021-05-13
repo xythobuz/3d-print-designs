@@ -1,6 +1,6 @@
 
 dual = false;               // dual extruder version
-mirrored = 0;               // 1 = "right",  0 = "left"
+mirrored = 1;               // 1 = "right",  0 = "left"
 
 prometheus = false;          // E3D v6 otherwise
 
@@ -19,11 +19,11 @@ holes_top3 = holes_top2 + 23;
 holes_spacing3 = 23;
 
 filament_d = 1.75;
-gear_od = 9;                                    //outer diameter: mk8 = 9, mk7 = 12
-gear_ed = 6.75;                                 //effective diameter: mk8 = 6.75, mk7 = 10.25
+gear_od = 12;                                    //outer diameter: mk8 = 9, mk7 = 12
+gear_ed = 10.25;                                 //effective diameter: mk8 = 6.75, mk7 = 10.25
 gear_groove_width = 3.5;
 filament_offset = (gear_ed + filament_d)/2;     //mk8 = 4.25, mk7 = 6  
-echo(filament_offset); 
+echo(extruder_filament_offset=filament_offset); 
 
 //bearing
 //603
@@ -37,7 +37,7 @@ bearing_od = 13; bearing_id = 4; bearing_h = 5;
 //MR104
 //bearing_od = 10; bearing_id = 4; bearing_h = 4;
 
-brass_tube = true;
+brass_tube = false;
 
 fillet = 1.5;
 supports = true;
@@ -48,25 +48,401 @@ include <rounded.scad>
 
 
 //assembly();
-print();
+//print();
 
+//base(dual);
 
+//translate([0, 0, 10])
+//    rotate([0, 180, 0])
+    translate([-30, 20, 40])
+    xy_fan_duct2();
 
+//mirror ([mirrored, 0, 0])
+//    translate([-16, 15, 6])
+//    rotate([90, 0, 0])
+//    lever_switch();
 
-module print() {    
-    mirror ([mirrored, 0, 0]) {
-        translate([0,31,depth]) rotate([-90, 0, 0]) base(dual);  
-        translate([50,0,10]) rotate([-90, 0, 0]) top_plate();
-        translate([50,0,10]) rotate([-90, 0, 0]) holder();      
-        translate([100,0,00]) rotate([-90, 0, 0]) cover();        
-        translate([105,50,height_m+42.5]) rotate([-180, 0, 0]) lever();              
-        translate([30,65,-23]) rotate([-90, 0, 0]) duct_5015();
+//translate([0, 0, -21.5])
+//    rotate([0, -90, 0])
+//    xy_fan_mount();
+
+//translate([0, 0, 13])
+//    rotate([0, 90, 0])
+//    translate([-34.5, 28.5, 34])
+//    xy_fan_duct();
+
+//translate([0, 0, 55])
+//    xy_fan_outlet();
+
+module switch_model() {
+    $fn = 15;
+    
+    difference() {
+        union() {
+            cube([12.8, 5.8, 6.2]);
+            
+            translate([-0.5, (5.8 - 4) / 2, 6.2 + 2.5])
+                rotate([0, 11, 0])
+                cube([13.5, 4.0, 0.3]);
+            
+            translate([0.9, 5.8 / 2, -4.0])
+                cylinder(d = 0.8, h = 4.0);
+            translate([12.8 - 0.9, 5.8 / 2, -4.0])
+                cylinder(d = 0.8, h = 4.0);
+            translate([12.8 / 2, 5.8 / 2, -4.0])
+                cylinder(d = 0.8, h = 4.0);
+        }
         
-    }        
+        translate([3.1, 5.9, 1.0])
+            rotate([90, 0, 0])
+            cylinder(d = 2.0, 6.0);
+        translate([3.1 + 6.5, 5.9, 1.0])
+            rotate([90, 0, 0])
+            cylinder(d = 2.0, 6.0);
+    }
+}
+
+module lever_switch() {
+    $fn = 20;
+    
+    translate([-6, 0, -62.4])
+        lever();
+    
+    //%translate([-9 + 0.5, 3, 0])
+    //    rotate([180, -90, 0])
+    //    switch_model();
+    
+    difference() {
+        cylinder(d = 9.0, h = 13.0);
+        
+        translate([0, 0, -0.1])
+            cylinder(d1 = 5.1, d2 = 2.5, h = 13.2);
+        
+        translate([-5.5, -15, 0])
+            cube([5, 30, 13.1]);
+        
+        translate([-9 + 0.5, 3, 0])
+            rotate([180, -90, 0])
+            switch_model();
+    }
+    
+    difference() {
+        union() {
+            translate([-11, 3.0, 0])
+                cube([11, 1.5 + 1.5, 13]);
+            translate([-11, -6.0, -3])
+                cube([11, 1.5 + 1.5, 13 + 3]);
+        }
+        
+        for (off = [-1 : 0.1 : 1]) {
+            translate([-7.5 + off, 10, 3.1])
+                rotate([90, 0, 0])
+                cylinder(d = 2.5, 20.0);
+            translate([-7.5 + off, 10, 9.6])
+                rotate([90, 0, 0])
+                cylinder(d = 2.5, 20.0);
+        }
+    }
+}
+
+module xy_fan_outlet_single() {
+    $fn = 15;
+    translate([4.5, 0, -51])
+    difference() {
+        rotate([0, -90, 0])
+            cylinder(d = 5, h = 50);
+        
+        translate([2, 0, 0])
+            rotate([0, -90, 0])
+            cylinder(d = 3, h = 50);
+        
+        for (i = [5 : 2 : 48]) {
+            if ((i <= 15) || (i >= 35))
+            #translate([-i, 14, -3.5])
+                rotate([77, 0, 0])
+                cylinder(d = 1.0, h = 14.0);
+        }
+    }
+}
+
+module xy_fan_outlet() {
+    $fn = 15;
+    // duct plug-in
+    difference() {
+        hull() {
+            translate([18.5, -3.5, -49])
+                cube([1, 7, 7]);
+            translate([13.5, -5, -50.5])
+                cube([1, 10, 10]);
+        }
+        hull() {
+            translate([18.5, -2.5, -48])
+                cube([1.1, 5, 5]);
+            translate([13.4, -4, -49.5])
+                cube([1.1, 8, 8]);
+        }
+    }
+    
+    difference() {
+        translate([13.5, -4, -49.5])
+            cube([1, 8, 8]);
+        translate([12.4, -1.5, -47])
+            rotate([0, 90, 0])
+            cylinder(d = 3, h = 2.2);
+        translate([12.4, 1.5, -47])
+            rotate([0, 90, 0])
+            cylinder(d = 3, h = 2.2);
+    }
+    
+    // adaptors to arms
+    difference() {
+        union() {
+            hull() {
+                translate([12.5, -1.5, -47])
+                    rotate([0, 90, 0])
+                    cylinder(d = 5, h = 1);
+                translate([4.5, -15, -51])
+                    rotate([0, 90, 0])
+                    cylinder(d = 5, h = 1);
+            }
+            hull() {
+                translate([12.5, 1.5, -47])
+                    rotate([0, 90, 0])
+                    cylinder(d = 5, h = 1);
+                translate([4.5, 15, -51])
+                    rotate([0, 90, 0])
+                    cylinder(d = 5, h = 1);
+            }
+        }
+        hull() {
+            translate([12.5, -1.5, -47])
+                rotate([0, 90, 0])
+                cylinder(d = 3, h = 1);
+            translate([4.5, -15, -51])
+                rotate([0, 90, 0])
+                cylinder(d = 3, h = 1);
+        }
+        hull() {
+            translate([12.5, 1.5, -47])
+                rotate([0, 90, 0])
+                cylinder(d = 3, h = 1);
+            translate([4.5, 15, -51])
+                rotate([0, 90, 0])
+                cylinder(d = 3, h = 1);
+        }
+    }
+    
+    // back arm
+    translate([0, -15, 0])
+        xy_fan_outlet_single();
+    
+    // front arm
+    translate([0, 15, 0])
+        scale([1, -1, 1])
+        xy_fan_outlet_single();
 }
 
 
+module xy_fan_duct2_insert(off=0) {
+    translate([-25 - (off / 2), -26 - (off / 2), 1 + (off / 2)])
+        cube([13 + off - 0.5, 18 + off - 1, 3 - off]);
+    
+    if (off >= 0) {
+        translate([-25.5, -27, 0.5])
+            cube([14, 19, 1]);
+    }
+}
+
+module xy_fan_duct2_hull(off=0) {
+    hull() {
+        translate([-40 + (off / 10), -1 - off / 2, -18.2 - (off / 5) + 1])
+            rotate([0, -3, 0])
+            cube([2 - (off / 10), 12 + off, 4 + off]);
+        
+        /*
+        if (off < 0) {
+            %translate([-40 + (off / 10), -1 - off / 2, -18.2 - (off / 5) + 1])
+                rotate([0, -3, 0])
+                translate([-60, 0, 0])
+                cube([2 - (off / 10) + 60, 12 + off, 4 + off]);
+        }
+        */
+        
+        translate([-25.5 - (off / 2),-27 - (off / 2), -0.5])
+            cube([14 + off, 19 + off, 1 - (off / 100)]);
+    }
+}
+
+module xy_fan_duct2() {
+    $fn = 15;
+    translate([54.5, -2.5, -34.5]) {
+        // visualize air stream
+        //%translate([-120, 0, -21 + 0.5])
+        //    rotate([0, -2, 0])
+        //    cube([80, 10, 2]);
+        
+        difference() {
+            union() {
+                xy_fan_duct2_insert(0);
+                xy_fan_duct2_hull(0);
+            }
+        
+            xy_fan_duct2_insert(-2);
+            xy_fan_duct2_hull(-3);
+        }
+    }
+}
+
+// custom fan duct
+module xy_fan_duct() {
+    $fn = 15;
+    translate([34.5, -28.5, -34])
+    difference() {
+        union() {
+            // fan insert
+            hull() {
+                translate([0.5, 1.5, 3])
+                    cube([12, 15, 1]);
+                cube([13, 18, 1]);
+            }
+            
+            // air "path"
+            hull() {
+                translate([0, 0, -1])
+                    cube([13, 18, 1]);
+                translate([0, 7, -10])
+                    rotate([-45, 0, 0])
+                    cube([13, 1, 13]);
+                translate([0, 20, -14])
+                    cube([13, 1, 13]);
+            }
+            hull() {
+                translate([0, 20, -14])
+                    cube([13, 1, 13]);
+                translate([-5, 22, -14])
+                    cube([1, 13, 13]);
+                translate([-18, 22, -18])
+                    cube([1, 13, 13]);
+            }
+        }
+        
+        // cutout for fan insert
+        translate([2, 2.5, -1])
+            cube([9, 13, 6]);
+        
+        // air "path"
+        hull() {
+            translate([2, 2, -1])
+                cube([9, 14, 1]);
+            translate([2, 7, -8])
+                rotate([-45, 0, 0])
+                cube([9, 1, 9]);
+            translate([2, 20, -12])
+                cube([9, 1, 9]);
+        }
+        hull() {
+            translate([2, 20, -12])
+                cube([9, 1, 9]);
+            translate([-5, 24, -12])
+                cube([1, 9, 9]);
+            translate([-18.1, 24, -16])
+                cube([1.1, 9, 9]);
+        }
+    }
+}
+
+// custom fan mount
+module xy_fan_mount() {
+    $fn = 15;
+    translate([21.5, -10, 0]) {
+        // upper screw base
+        difference() {
+            translate([0, -8, 0])
+                cube([2, 32 + 8, 10]);
+            translate([-1, 5, 5])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 4);
+            translate([-1, 15, 5])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 4);
+            translate([-1, 25, 5])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 4);
+        }
+        
+        // lower screw base
+        translate([0, 32, -30])
+        difference() {
+            cube([2, 8, 40]);
+            translate([-1, 4, 4])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 4);
+            translate([-1, 4, 24])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 4);
+        }
+        
+        // lower fan mount
+        translate([0, 32 - 8, -30])
+        difference() {
+            union() {
+                cube([2, 8, 10]);
+                translate([2, 4, 4])
+                    rotate([0, 90, 0])
+                    cylinder(d = 8, h = 5);
+            }
+            translate([-1, 4, 4])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 9);
+        }
+        
+        // left fan mount
+        translate([0, -11 - 8, 0])
+        difference() {
+            union() {
+                cube([2, 11, 16]);
+                translate([2, 4, 12])
+                    rotate([0, 90, 0])
+                    cylinder(d = 8, h = 5);
+            }
+            translate([-1, 4, 12])
+                rotate([0, 90, 0])
+                cylinder(d = 3.2, h = 9);
+        }
+    }
+}
+
+mirror([mirrored, 0, 0]) {
+    //translate([0, 31, depth]) rotate([-90, 0, 0]) base(dual);
+    //translate([20,0,10]) rotate([-90, 0, 0]) holder();
+    //translate([20,0,00]) rotate([-90, 0, 0]) cover();
+}
+
+module print() {    
+    mirror ([mirrored, 0, 0]) {
+        translate([dual ? -20 : 0,31,depth]) rotate([-90, 0, 0]) base(dual);  
+        translate([50,0,10]) rotate([-90, 0, 0]) top_plate();
+        translate([50,0,10]) rotate([-90, 0, 0]) holder();      
+        translate([100,0,00]) rotate([-90, 0, 0]) cover();        
+        translate([105,50,height_m+42.5]) rotate([-180, 0, 0]) lever();
+        translate([30,65,-23]) rotate([-90, 0, 0]) duct_5015();
+        
+    }
+}
+
 module assembly() {
+    color("blue") xy_fan_mount();
+    color("cyan") xy_fan_duct2();
+    //color("purple") xy_fan_outlet();
+    
+    %translate([-248.7, -569.5, -31])
+        import("sensor_mount_19mm_v3.stl");
+    
+    %translate([21.5, -10, 0])
+            translate([2 + 5, 14.5 - 8, -7])
+            rotate([90, 0, 90])
+            fan_5015();
+    
     mirror ([mirrored, 0, 0]) {
         assembly_top();
         if (dual)
@@ -85,12 +461,14 @@ module assembly() {
     
     //translate([filament_offset, -cover_d, 0]) pen_holder_assembly(10);    
     
-    translate([-width/2, -43/2+5, -38/2+5]) rotate([-90,180,90])  { 
+    /*
+    translate([-width * 3 / 2, -43/2+5, -38/2+5]) rotate([-90,180,90])  { 
         color("gray", 0.5) render() fan_5015();
         duct_5015();
     }
+    */
 
-    translate([dual ? width/2 : 0,depth,height_m-34]) rotate([270,180,0]) color("gray",0.5) import("i3_rework_1v0_x-carriage-_X-CarriageMod_LME8UU_gt_holes.stl");   
+    translate([dual ? -width/2 : 0,depth,height_m-34]) rotate([270,180,0]) color("gray",0.5) import("i3_rework_1v0_x-carriage-_X-CarriageMod_LME8UU_gt_holes.stl");   
     //translate([width/2+7.2,depth,-49]) color("gray",0.4) rotate([270,180,0]) import("PI3B-B03-carriage.STL");    
     //translate([26.5,depth,19]) rotate([270,180,0]) color("gray",0.5) import("X-axis-part_3_lm8uu_v1_1.stl");
     //translate ([-10, -10, -55.5 ]) color("white",0.25) cube([width+20,depth+30,1]); 
@@ -104,8 +482,12 @@ module assembly_top() {
     color("yellow") holder();
     color("yellow") top_plate();
     color("orange") cover(); 
-    color("red") lever();
-   
+    //color("red") lever();
+
+    //color("red")
+    translate([6, 0, 62.4])
+        lever_switch();
+
     color("silver", 0.5) bearing();                        
     color("blue", 0.25) translate([filament_offset,0, 0])  cylinder(d=filament_d, h=70, $fn=64);  //filament
 
@@ -115,7 +497,7 @@ module assembly_top() {
         translate([filament_offset, 0, -31]) color("gray", 0.5) rotate([180,0,0]) cylinder(d=5, h=19);
     }    
     else
-        translate([filament_offset, 0, -13.5]) rotate([90,0,-90]) color("gray", 0.75) import("E3D_V6_1.75mm_Universal_HotEnd_Mockup.stl");
+        translate([filament_offset, 0, -13.5]) rotate([90,0,90]) color("gray", 0.75) import("E3D_V6_1.75mm_Universal_HotEnd_Mockup.stl");
     
     
     
@@ -261,19 +643,19 @@ module lever () {
      
     translate([0, 0, height_m]) difference() {
             union() {
-                hull() {
-                    translate([-8, -(lever_h/2), 32.5]) rounded_cube(38-14+fillet, lever_h, 10, noback = true);
+                //hull() {
+                    #translate([-8, -(lever_h/2), 32.5]) rounded_cube(38-14+fillet, lever_h, 10, noback = true);
                     translate([-13, -(lever_h/2), 39.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-13, -(lever_h/2), 35.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
-                }    
+                //}    
                 
-                hull() {
+                //hull() {
                     translate([-13, -(lever_h/2), 39.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-13, -(lever_h/2), 35.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-18.5, -(lever_h/2), 35.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-25, -(lever_h/2), 39.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
-                }
-                hull()
+                //}
+                //hull()
                 {
                     translate([bearing_x-bearing_od/2+1, -(lever_h/2), 21.5]) 
                         rounded_cube(bearing_od/2, lever_h, 15);
@@ -485,13 +867,13 @@ module fan_5015() {
                     translate([0.5, 0]) cylinder(d=48, h=13);
                     translate([-1, 0]) cylinder(d=48, h=13);
                 }
-                translate([-25,-26,1]) cube([18,25,13]);
+                translate([-25,-27,1]) cube([18,25,13]);
             }
             translate([-26+16+11,-2,1]) cylinder(d=24, h=15);
         }
                 
-        translate([-43/2, 38/2]) cylinder(d=4.4, h=15);
-        translate([43/2, -38/2]) cylinder(d=4.4, h=15);
+        translate([-43/2, 38/2, -1]) cylinder(d=4.4, h=17);
+        translate([43/2, -38/2, -1]) cylinder(d=4.4, h=17);
     }
 }
 
