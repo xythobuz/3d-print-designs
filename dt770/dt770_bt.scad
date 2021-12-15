@@ -116,6 +116,10 @@ module rx_box() {
     rotate([0, 180, 180])
     translate([-rx_box_w / 2, -rx_box_d / 4, -rx_box_h])
     prism(rx_box_w, rx_box_d / 4, rx_box_h / 4);
+    
+    rotate([0, 0, 180])
+    translate([-rx_box_w / 2, -rx_box_d / 4, -0.25])
+    prism(rx_box_w, rx_box_d / 4, rx_box_h / 4);
 }
 
 module carrier() {
@@ -153,4 +157,6 @@ module carrier() {
 //rx_post();
 //rx_box();
 
+translate([0, 0, carrier_width + carrier_width_add])
+rotate([0, 180, 0])
 carrier();
