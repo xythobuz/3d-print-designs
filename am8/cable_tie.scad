@@ -41,8 +41,11 @@ module x_tie() {
         union() {
             cube([width, height, wall]);
             
-            translate([5 + 1, 20 - 1, wall])
-            rotate([0, 0, -45])
+            translate([5.5, 20 - 0.5, wall])
+            rotate([0, 0, -35])
+            cable();
+            
+            translate([22.5, 20 - 3, wall])
             cable();
         }
         
@@ -100,8 +103,8 @@ module rail_assembly() {
     rail_tie(1);
 }
 
-rail_assembly();
+//rail_assembly();
 
-//x_tie();
+x_tie();
 //rail_tie(0);
 //rail_tie(1);
