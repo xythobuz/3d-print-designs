@@ -2,7 +2,7 @@ knob_dia = 40.0;
 knob_height = 15.0;
 knob_wall = 4.0;
 
-post_dia = 13.8 - 0.5;
+post_dia = 13.8;// - 0.5;
 post_height = 32.0;
 
 pipe_off_x = 6.5 - 0.5;

@@ -34,6 +34,11 @@ tr1_r = -45;
 tr2_r = -100;
 tr_r = [tr1_r, tr2_r];
 
+big_vat = true;
+bv_d = 36; // TODO
+bv_h = 29; // TODO
+bva_h = 25; // TODO
+
 $fn = $preview ? 50 : 200;
 
 module pipe() {
@@ -55,7 +60,11 @@ module pipe() {
     for (r = tr_r)
     rotate([0, 0, r])
     translate([(m_do + tr_do) / 2 + tr_ox, 0, (m_h - tr_h) / 2])
-    cylinder(d = v_d, h = v_h);
+    if (big_vat)
+        translate([0, 0, bva_h])
+        cylinder(d = bv_d, h = bv_h);
+    else
+        cylinder(d = v_d, h = v_h);
 }
 
 module ring() {
@@ -117,5 +126,44 @@ module ring() {
     }
 }
 
-%pipe();
-ring();
+module adapter() {
+    difference() {
+        union() {
+            cylinder(d = v_d, h = bva_h - 8);
+
+            hull() {
+                translate([0, 0, bva_h - 8])
+                cylinder(d = v_d, h = 1);
+
+                translate([0, 0, bva_h - 1])
+                cylinder(d = bv_d + 6, h = 1);
+            }
+
+            translate([0, 0, bva_h])
+            cylinder(d = bv_d + 6, h = 15);
+        }
+
+        translate([0, 0, -1])
+        cylinder(d = v_d - 5, h = 50);
+
+        translate([0, 0, bva_h])
+        cylinder(d = bv_d + 2, h = 50);
+    }
+}
+
+module assembly() {
+    %pipe();
+
+    ring();
+
+    if (big_vat)
+    color("green")
+    for (r = tr_r)
+    rotate([0, 0, r])
+    translate([(m_do + tr_do) / 2 + tr_ox, 0, (m_h - tr_h) / 2])
+    adapter();
+}
+
+//ring();
+//adapter();
+assembly();

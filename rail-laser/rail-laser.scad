@@ -1,5 +1,8 @@
 include <roundedcube.scad>
 
+right_hand_switch_version = 1;
+picatinny_rail_version = 1;
+use_rounded_cubes = 1;
 $fn = 50;
 
 bodies_gap = 0.05;
@@ -68,7 +71,7 @@ frame_mid_len = (frame_mount_hole / 4) + (2 * frame_wall);
 frame_mid_dia = 8; //laser_dia + (2 * frame_wall);
 frame_tail_len = 8.0;
 frame_tail_len_add = 1.0;
-frame_tail_width = 5.5; //frame_mid_dia + 0.5;
+frame_tail_width = 4.0; //5.5; //frame_mid_dia + 0.5;
 frame_negative_width = frame_sphere * 2 / 3 + 7;
 frame_hole_dia = 2.85;
 frame_hole_dia_arch = 3.0 + 0.1;
@@ -100,7 +103,7 @@ module rail_lip(l) {
     }
 }
 
-module rail(l) {
+module rail_1911(l) {
     difference() {
         cube([l, rail_width, rail_height]);
         
@@ -111,6 +114,40 @@ module rail(l) {
             rotate([0, 0, 180])
             rail_lip(l);
         }
+    }
+}
+
+// https://www.thingiverse.com/thing:11748
+module railprofile() {
+    add_height = 1.5;
+    add_width = 0.8;
+	polygon(points = [
+        [-10.6 - add_width / 2, 0],
+        [-8.4 + add_height - add_width / 2, 2.2 + add_height],
+        [8.4 - add_height + add_width / 2, 2.2 + add_height],
+        [10.6 + add_width / 2, 0],
+        [7.8 + add_width / 2, -2.8],
+        [7.8 + add_width / 2, -3.8 - rail_height],
+        [-7.8 - add_width / 2, -3.8 - rail_height],
+        [-7.8 - add_width / 2, -2.8]
+    ], paths = [[0, 1, 2, 3, 4, 5, 6, 7, 0]]);
+}
+
+module rail_picatinny(l) {
+    translate([0, 10.6, 3.7])
+    rotate([90, 180, 90])
+    linear_extrude(height = l)
+    railprofile();
+    
+    translate([0, -body_width / 2, 6.7])
+    cube([l, body_width * 2, 10]);
+}
+
+module rail(l) {
+    if (picatinny_rail_version == 0) {
+        rail_1911(l);
+    } else {
+        rail_picatinny(l);
     }
 }
 
@@ -193,10 +230,8 @@ module laser_frame(added_gap = 0, negative = 0) {
                 }
                 
                 // bottom cube
-                translate([-(frame_tail_width + added_gap) / 2, -(frame_tail_width + added_gap) / 2, frame_len - frame_sphere - frame_mid_len - frame_tail_len - frame_tail_len_add]) {
-                    cube([frame_tail_width + added_gap, frame_tail_width + added_gap, frame_tail_len + frame_tail_len_add]);
-                    //roundedcube([frame_tail_width + added_gap, frame_tail_width + added_gap, frame_tail_len]);
-                }
+                translate([-(frame_tail_width + added_gap) / 2, -(frame_tail_width + added_gap) / 2, frame_len - frame_sphere - frame_mid_len - frame_tail_len - frame_tail_len_add])
+                cube([frame_tail_width + added_gap, frame_tail_width + added_gap, frame_tail_len + frame_tail_len_add]);
             } else {
                 translate([0, 0, frame_len - frame_add_touch])
                 cylinder(d = laser_dia + added_gap, h = frame_mid_len + frame_add_touch);
@@ -276,9 +311,12 @@ module switch(add = 0.0) {
 module body(hole_dia) {
     difference() {
         // main body part
-        cube([body_length, body_width, body_height]);
-        //roundedcube([body_length, body_width, body_height], false, body_cube_rounding);
-        
+        if (use_rounded_cubes) {
+            roundedcube([body_length, body_width, body_height], false, body_cube_rounding);
+        } else {
+            cube([body_length, body_width, body_height]);
+        }
+
         // cutout for rail
         translate([-1, (body_width - rail_width) / 2, body_height - rail_height + 0.01])
         rail(body_length + 2);
@@ -339,6 +377,8 @@ module body(hole_dia) {
 }
 
 module body_half(half) {
+    scale([1, right_hand_switch_version ? -1 : 1, 1])
+    translate([0, right_hand_switch_version ? -body_width : 0, 0])
     difference() {
         if (half == 0) {
             body(body_hole_dia_left);
@@ -360,11 +400,11 @@ module body_half(half) {
 module print() {
     translate([0, 0, body_width])
     rotate([-90, 0, 0])
-    body_half(0);
+    body_half(right_hand_switch_version ? 1 : 0);
     
     translate([0, body_height * 2 + 5, 0])
     rotate([90, 0, 0])
-    body_half(1);
+    body_half(right_hand_switch_version ? 0 : 1);
     
     translate([body_length + (frame_brim_width / 2) + 5, body_height + (frame_brim_width / 2) + 5, 0]) {
         translate([0, 0, frame_tail_len_add])
@@ -383,10 +423,39 @@ module print() {
     //cube([80, 95, 0.2]);
 }
 
+rail_test_height = 10;
+
+module rail_test_part(picatinny = 0) {
+    difference() {
+        cube([rail_test_height, rail_width + 4, rail_height + 2]);
+        
+        translate([-0.1, 2, 2.1]) {
+            if (picatinny == 0) {
+                rail_1911(rail_test_height + 0.2);
+            } else {
+                rail_picatinny(rail_test_height + 0.2);
+            }
+        }
+    }
+}
+
+module rail_test() {
+    translate([rail_height + 2, 0, rail_test_height])
+    rotate([0, 90, 0]) {
+        translate([0, rail_width + 4, 0])
+        rotate([180, 0, 0])
+        rail_test_part(0);
+        
+        rail_test_part(1);
+    }
+}
+
+//rail_test();
+
 //laser_frame();
 //rail_lock();
 
-//body_half(0);
+body_half(0);
 //body_half(1);
 
-print();
+//print();

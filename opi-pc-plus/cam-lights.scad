@@ -1,6 +1,3 @@
-include </home/thomas/Projekte/3d/opi-pc-plus/cam-holder.scad>
-use </home/thomas/Projekte/3d/opi-pc-plus/opi-cam-mount.scad>
-
 light_height = 8;
 light_wall = 3;
 light_wall_add = 2;
@@ -42,13 +39,40 @@ module lights_mount() {
     }
 }
 
-lights_mount();
+include <cam-holder.scad>
+use <../Webcam Holder/cam_bracket.scad>
 
-/*
-cam_holder_mount();
+module fab_min_mount() {
+    translate([-13.5, -60.5, 120])
+    union() {
+        rotate([90, 0, 90])
+        webcam_shaft();
+    
+        translate([27, -6, -5])
+        rotate([0, 180, 0])
+        cam_plate();
+    
+        hull() {
+            translate([0, -6, -9])
+            cube([27, 3, 8]);
+            translate([9, -1, -5.5])
+            cube([9, 10, 5.5]);
+        }
+    }
+}
 
-color("white")
-%translate([13, -37, 75])
-    rotate([90, 0, 180])
-    cam_holder();
-*/
+//translate([0, 0, -15])
+//lights_mount();
+
+// for use with orangepi cam you just need this
+//cam_holder_mount();
+
+// orangepi cam
+//use <opi-cam-mount.scad>
+//color("white")
+//%translate([13, -37, 75])
+//    rotate([90, 0, 180])
+//    cam_holder();
+
+// Fabrikator Mini Cam Holder
+fab_min_mount();

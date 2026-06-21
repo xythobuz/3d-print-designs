@@ -16,7 +16,7 @@ hole_height = filter_height - 2 * filter_wall;
 hole_off = filter_wall;
 adapter_height = 4;
 
-show_open = false;
+show_open = true;
 
 $fn = 42;
 

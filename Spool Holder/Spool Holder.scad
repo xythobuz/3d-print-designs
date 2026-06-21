@@ -18,7 +18,7 @@
 size_modifier = -25;
 
 // Spool width
-spool_width = 35;
+spool_width = 56;
 
 // Distance of spool rollers from border
 balls_distance = 7.5;

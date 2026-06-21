@@ -1,4 +1,3 @@
-
 dual = false;               // dual extruder version
 mirrored = 1;               // 1 = "right",  0 = "left"
 
@@ -42,18 +41,16 @@ brass_tube = false;
 fillet = 1.5;
 supports = true;
 
-
 include <rounded.scad>
 //use <pen_holder.scad>
-
 
 //assembly();
 //print();
 
 //base(dual);
 
-//translate([0, 0, 10])
-//    rotate([0, 180, 0])
+translate([0, 0, 10])
+    rotate([0, 180, 0])
     translate([-30, 20, 40])
     xy_fan_duct2();
 
@@ -61,6 +58,10 @@ include <rounded.scad>
 //    translate([-16, 15, 6])
 //    rotate([90, 0, 0])
 //    lever_switch();
+
+//rotate([-90, 0, 0])
+//translate([-6, 0, -62.4])
+//lever();
 
 //translate([0, 0, -21.5])
 //    rotate([0, -90, 0])
@@ -288,7 +289,7 @@ module xy_fan_duct2() {
             }
         
             xy_fan_duct2_insert(-2);
-            xy_fan_duct2_hull(-3);
+            xy_fan_duct2_hull(-3.8);
         }
     }
 }
@@ -643,19 +644,19 @@ module lever () {
      
     translate([0, 0, height_m]) difference() {
             union() {
-                //hull() {
-                    #translate([-8, -(lever_h/2), 32.5]) rounded_cube(38-14+fillet, lever_h, 10, noback = true);
+                hull() {
+                    translate([-8, -(lever_h/2), 32.5]) rounded_cube(38-14+fillet, lever_h, 10, noback = true);
                     translate([-13, -(lever_h/2), 39.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-13, -(lever_h/2), 35.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
-                //}    
+                }    
                 
-                //hull() {
+                hull() {
                     translate([-13, -(lever_h/2), 39.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-13, -(lever_h/2), 35.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-18.5, -(lever_h/2), 35.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
                     translate([-25, -(lever_h/2), 39.5]) rotate([-90, 0, 0]) rounded_cylinder(3, lever_h-1, fillet, true, true);
-                //}
-                //hull()
+                }
+                hull()
                 {
                     translate([bearing_x-bearing_od/2+1, -(lever_h/2), 21.5]) 
                         rounded_cube(bearing_od/2, lever_h, 15);
@@ -697,7 +698,7 @@ module lever () {
         }
         
 
-        //translate([filament_offset, -(bearing_h)/2, 0]) cube([20, bearing_h+0.1, 21.5]); 
+        translate([filament_offset, -(bearing_h)/2, 0]) cube([20, bearing_h+0.1, 21.5]); 
         
         // filament hole
         translate([filament_offset,0, 25]) cylinder(d=4.2, h=20, $fn=64); 
@@ -707,19 +708,12 @@ module lever () {
             cylinder(r = 1.6, h=30, $fn=64, center=true);            
             translate([-3, -3.3, 3]) cube([6, 10, 3.0]);
         }
-        
-        
-  
     }       
 }
-
-
-
 
 module cover() {
     difference() {
         union() {
-
             translate([-width/2, -cover_d, 0]) rounded_cube(width, cover_d, height_m, fillet,fillet,fillet);        
             translate([filament_offset-5,-6, height_m-1]) cube ([10, 6, 20]);    
         }
@@ -735,11 +729,7 @@ module cover() {
         screw_hole_y(filament_offset-5, -cover_d, 5);
         screw_hole_y(filament_offset-15, -cover_d, 5);
     }
-
-    
 }
-
-
 
 module hotend_mount() {
         cylinder(d=4.2, h=46, $fn=64);
@@ -747,7 +737,6 @@ module hotend_mount() {
         translate([0,0,8 - 4.1]) cylinder(d=17, h= prometheus ? 5 : 4.1, $fn=64);    
         translate([0,0,8]) cylinder(d=9, h=2, $fn=64);
 }
-
 
 module screw_hole_x(y, z, r=0, l=8, w=width) {
         translate([-w/2, y, z]) rotate([0, 90, 0]) {
@@ -766,7 +755,6 @@ module screw_hole_y(x, y, z, l=7.5) {
             translate([-3.3, -3, 3]) cube([10, 6, 3.0]);
         }   
 }
-
 
 module screw_hole_carriage() {
     rotate([90, 0, 0]) {
@@ -788,7 +776,6 @@ module screw_holes_main() {
     translate([width/2-5.5, depth-4, height_m/2]) rotate([-90, 0, 0]) cylinder( d = 6.6, h = 4.1, $fn=6);
     translate([-width/2+5.5, depth-4, height_m/2]) rotate([-90, 0, 0]) cylinder( d = 6.6, h = 4.1, $fn=6);
 }
-
 
 module flex_guide()
 {
@@ -827,9 +814,6 @@ module bearing() {
     }   
 }
 
-
-
-
 module ptfe_endmount() {
     $fn=32;
     difference() {
@@ -843,7 +827,6 @@ module ptfe_endmount() {
         translate([11,26-7,0]) cylinder(d=9.5, h=1.5);
     }
 }
-
 
 module fan_5015() {
     $fn=64;
@@ -899,10 +882,6 @@ module duct_5015() {
     }
 }
 
-
-
-
-
 module motor_mount() {
     linear_extrude (height = 5)
     difference() {
@@ -914,6 +893,3 @@ module motor_mount() {
         translate([-31/2, -31/2]) circle(r=1.6, $fn=32);
     }
 }
-
-
-

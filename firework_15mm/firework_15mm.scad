@@ -1,16 +1,16 @@
 
-charge_dia = 16.2;
-charge_height = 42.0;
+charge_dia = 15.8;
+charge_height = 55.0;
 charge_wall = 2.5;
 
 base_add = 2.5;
-bottom_pins = 3.0;
+bottom_pins = 4.7;
 
 ignite_dia = 7.0;
 ignite_height = 20.0;
 ignite_wall = 1.2;
 
-cable_dia = 5.0;
+cable_dia = 4.5;
 cable_width = 2.0;
 
 hole_dia = 7.0;
@@ -76,11 +76,14 @@ module charge() {
         translate([0, -cable_dia / 2, -1])
         cube([charge_dia, cable_dia, cable_width + 1]);
         
+        /*
         translate([0, 0, base_add])
         gas_holes();
-        
-        translate([0, 0, charge_height / 2 + base_add])
+        translate([0, 0, charge_height / 3 + base_add])
         gas_holes();
+        translate([0, 0, charge_height * 2 / 3 + base_add])
+        gas_holes();
+        */
     }
     
     // pins to hold up long charges
@@ -112,4 +115,15 @@ module top() {
     mount_tabs();
 }
 
+module print() {
+    for (i = [0 : 2]) {
+        for (j = [0 : 3]) {
+            translate([i * charge_dia * 3, j * charge_dia * 3, 0])
+            top();
+        }
+    }
+}
+
 top();
+
+//print();

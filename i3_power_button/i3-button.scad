@@ -39,10 +39,27 @@ module mount() {
     }
 }
 
-button();
+module ctc_i3_version() {
+    button();
 
-translate([-mount_width_in - mount_button_off_x, mount_button_off_y, front_height - mount_wall])
-    mount();
+    translate([-mount_width_in - mount_button_off_x, mount_button_off_y, front_height - mount_wall])
+        mount();
 
-translate([0, 0, front_height - support_height])
-    cube([mount_width_out - mount_button_off_x, mount_button_off_y + mount_height, support_height]);
+    translate([0, 0, front_height - support_height])
+        cube([mount_width_out - mount_button_off_x, mount_button_off_y + mount_height, support_height]);
+}
+
+fab_min_tail_len = 40;
+
+module fab_min_version() {
+    button();
+    
+    translate([0, wall_size, front_height - wall_size])
+    cube([front_width, fab_min_tail_len, wall_size]);
+    
+    translate([0, -wall_size, front_height - wall_size])
+    cube([front_width, wall_size, 2 * wall_size]);
+}
+
+//ctc_i3_version();
+fab_min_version();

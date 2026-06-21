@@ -1,10 +1,14 @@
 
 plug_dia = 10.5;
 plug_length = 20.0;
-plug_wall = 2.0;
+plug_len_add = 2;
+
+// use 4 for holder, 2 for adapter
+plug_wall = 4.0; //2.0;
+
 shower_wall = 4.0;
-shower_dia_min = 23.0;
-shower_dia_max = 25.0;
+shower_dia_min = 25;//31.0;
+shower_dia_max = 30;//35.0;
 shower_length = 40.0;
 shower_cut = 15.0;
 shower_angle = 45;
@@ -53,6 +57,7 @@ module holder() {
     
     difference() {
         hull() {
+            translate([0, 0, -plug_len_add])
             cylinder(d = plug_dia + plug_wall * 2, h = 1);
             
             translate([0, 0, plug_length + plug_wall - 1])
@@ -68,8 +73,8 @@ module holder() {
             cube([1, 1, 1]);
         }
         
-        translate([0, 0, -1])
-        cylinder(d = plug_dia, h = plug_length + 1);
+        translate([0, 0, -plug_len_add - 1])
+        cylinder(d = plug_dia, h = plug_length + plug_len_add + 1);
         
         translate([-(plug_dia + plug_wall) / 2, shower_dia_min / 2 + shower_wall + (plug_dia + plug_wall) / 2, 0])
         rotate([0, shower_angle, 0])
@@ -152,22 +157,26 @@ module nut() {
     }
 }
 
-/*
+
 translate([0, 0, 3])
 scale([1, -1, 1])
 holder();
 
-adapter_a();
+/*
+translate([0, 0, -30]) {
+    adapter_a();
 
-translate([0, 15, -plate_width])
-rotate([0, 180, 180])
-adapter_b();
+    translate([0, 15, -plate_width])
+    rotate([0, 180, 180])
+    adapter_b();
+
+
+    //translate([0, -8, -10])
+    //rotate([90, 0, 180])
+    //bolt();
+
+    //translate([0, 29, -10])
+    //rotate([90, 0, 0])
+    //nut();
+}
 */
-
-//translate([0, -8, -10])
-//rotate([90, 0, 180])
-//bolt();
-
-//translate([0, 29, -10])
-//rotate([90, 0, 0])
-nut();

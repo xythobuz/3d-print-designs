@@ -97,7 +97,7 @@ module webcam_shaft() {
 
 // -----------------------------------------------------------
 
-module all() {
+module webcam_adaptor_all() {
     %translate([9, -9.5 - fitGap, 2])
         rotate([90, 0, 180])
         webcam_shaft();
@@ -127,4 +127,4 @@ module all() {
 
 translate([width + (screwOuter / 2), 0, 0])
     rotate([90, 0, 180])
-    all();
+    webcam_adaptor_all();

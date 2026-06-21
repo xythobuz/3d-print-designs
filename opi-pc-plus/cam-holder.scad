@@ -27,7 +27,7 @@ mock_pole_off = 10.0;
 $fn = 20;
 
 module prism(l, w, h) {
-    polyhedron(
+    #polyhedron(
         points = [[0,0,0], [l,0,0], [l,w,0], [0,w,0], [0,w,h], [l,w,h]],
         faces = [[0,1,2,3],[5,4,3,2],[0,4,5,1],[0,3,4],[5,2,1]]
     );
@@ -74,6 +74,7 @@ module cam_plate() {
 
 module cam_mount() {
     translate([0, -edge / 2 - length + hole_off, height - forw_height + mock_pole_height - mock_pole_off * 2 - 40])
+    rotate([0, 0, 180])
     difference() {
         union() {
             cylinder(d = hole_size + hole_wiggle + cam_wall * 2, h = cam_height);
@@ -99,12 +100,14 @@ module cam_mount() {
 }
 
 module cam_holder_mount() {
-    holder(); adaptor();
+    holder();
+    adaptor();
 
     %translate([0, -edge / 2 - length + hole_off, height - forw_height - mock_pole_off])
         cylinder(d = hole_size, h = mock_pole_height);
 
+    translate([0, 0, 35])
     cam_mount();
 }
 
-//cam_holder_mount();
+cam_holder_mount();
